@@ -99,5 +99,22 @@ public class SimpleOrderService implements OrderService {
         pizzas.add(pizzaRepository.getPizzaById(pizzaId));
         order.setPizzas(pizzas);
         return order;
+    }
+    
+    @Override
+    public Order deletePizzaFromOrder(Order order, Integer pizzaId) {
+        List<Pizza> pizzas = order.getPizzas();
+        pizzas.remove(pizzaRepository.getPizzaById(pizzaId));
+        order.setPizzas(pizzas);
+        return order;
     }  
+    
+    @Override
+    public Order updateOrder(Order newOrder) {
+        Order order = orderRepository.getOrderById(newOrder.getId());
+        order.setCustomer(newOrder.getCustomer());
+        order.setPizzas(newOrder.getPizzas());
+        return order;
+    }  
+    
 }

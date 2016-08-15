@@ -64,6 +64,17 @@ public class PizzaRestController {
         return new ResponseEntity<>(pizza.getPrice(), HttpStatus.FOUND);
     }
 
+    @RequestMapping(value = "pizza/{id}/price", method = RequestMethod.PUT)
+    public ResponseEntity<Double> updatePizzaPrice(@PathVariable("id") Integer id, @RequestBody Double newPrice) {
+
+        Pizza pizza = pizzaService.getPizzaById(id);
+        if (pizza == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        pizza.setPrice(newPrice);
+        return new ResponseEntity<>(pizza.getPrice(), HttpStatus.FOUND);
+    }
+    
     @RequestMapping(value = "pizza",
             method = RequestMethod.POST,
             consumes = "application/json")

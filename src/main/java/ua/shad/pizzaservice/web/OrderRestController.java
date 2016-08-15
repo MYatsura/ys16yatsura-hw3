@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import ua.shad.pizzaservice.domain.Customer;
 import ua.shad.pizzaservice.domain.Order;
 import ua.shad.pizzaservice.domain.Pizza;
 import ua.shad.pizzaservice.service.OrderService;
@@ -58,4 +60,29 @@ public class OrderRestController {
         return new ResponseEntity(HttpStatus.OK);
     }
     
+    @RequestMapping(value = "order/{orderId}/item/{pizzaId}",
+            method = RequestMethod.DELETE)
+    public ResponseEntity<Integer> deleteItemFromOrder(@PathVariable("orderId") int orderId,
+                                              @PathVariable("pizzaId") int pizzaId) {
+        Order order = orderService.deletePizzaFromOrder(orderService.getOrderById(pizzaId), pizzaId);
+        if (order == null) {
+            return new ResponseEntity<>(orderId, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
+    }    
+    
+    @RequestMapping(value = "order/{orderId}/customer",
+            method = RequestMethod.PUT,
+            headers = "Content-Type=application/json")
+    public ResponseEntity updateCustomerInOrder(
+            @PathVariable("orderId") int orderId,
+            @RequestBody Customer customer) {
+        Order order = orderService.getOrderById(orderId);
+        if (order == null) {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+        order.setCustomer(customer);
+        orderService.updateOrder(order);
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
